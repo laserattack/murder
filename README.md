@@ -24,3 +24,9 @@ Examples:
   murder -q :3000           Kill process on port 3000 quietly
   murder --nocolor python   Kill python processes without colors
 ```
+
+# Requirements
+
+- Perl 5.10+
+- `ps`, `awk`, `grep` - usually pre-installed
+- `lsof` - for port killing (optional)
