@@ -31,7 +31,7 @@ Examples:
   murder --nocolor python   Kill python processes without colors
 ```
 
-By default, murder kills the process and all its descendants (if any exist). To kill only the specified process, use the *--one* or *-o* flag.
+By default, murder kills the process and all its descendants (if any exist). To kill only the specified process, use the `--one` or `-o` flag.
 
 # Requirements
 
