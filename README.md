@@ -2,7 +2,7 @@
 
 **murder** - simple Linux process killer script that I often use
 
-Inspired by Evan Hahn's murder script
+Inspired by [Evan Hahn's](https://evanhahn.com/) murder script
 
 > murder is just an easier-to-use kill. It offers me two main features: (1) I don’t have to know the pid. murder node, for example, saves you a step (2) it starts by asking nicely with SIGTERM, waits a bit, and then gets more and more “aggressive” before eventually sending SIGKILL. It’s a simple script but I use it when a process really needs to be shut down.
 > — *Evan Hahn ([evanhahn.com/a-decade-of-dotfiles](https://evanhahn.com/a-decade-of-dotfiles/))*
