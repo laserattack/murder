@@ -1,6 +1,6 @@
 # Wtf?
 
-**murder** - a Linux process killer script that I often use
+**murder** - Linux process killer script that I often use
 
 # Usage
 
