@@ -17,6 +17,7 @@ Options:
   -q, --quiet     Quiet mode (minimal output)
   -h, --help      Show this help message
   -n, --nocolor   Disable colored output
+  -o, --one       Kill only the specified process, not the entire tree
 
 Arguments:
   PID             Process ID to kill
@@ -28,7 +29,6 @@ Examples:
   murder -f ruby            Kill all ruby processes without asking
   murder -q :3000           Kill process on port 3000 quietly
   murder --nocolor python   Kill python processes without colors
-
 ```
 
 # Requirements
