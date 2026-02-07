@@ -12,6 +12,9 @@ our @SIGNALS = (
     [9, 0]
 );
 
+our $COLOR = "\e[36m";
+our $RESET = "\e[0m";
+
 sub go_ahead {
     my $input = <STDIN>;
     chomp($input);
@@ -51,14 +54,14 @@ sub murder_pid {
     my @all_pids = get_all_descendants($pid);
     unshift @all_pids, $pid;
     
-    say "Process tree: " . join(', ', @all_pids);
+    say "Process tree: " . join($RESET.', '.$COLOR, map { $COLOR.$_ } @all_pids).$RESET;
     
     foreach my $target_pid (reverse @all_pids) {
         next unless is_running($target_pid);
         
         foreach my $sig (@SIGNALS) {
             my ($code, $wait) = @$sig;
-            say "Sending signal $code to pid $target_pid";
+            say "Sending signal ".$COLOR."$code".$RESET." to pid ".$COLOR."$target_pid".$RESET;
             kill($code, $target_pid);
             sleep(0.3);
             last unless is_running($target_pid);
@@ -74,7 +77,7 @@ sub murder_port {
     foreach my $pid (@pids) {
         my $command = `ps -p $pid -o comm=`;
         chomp($command);
-        print("Kill process '$command' (pid $pid)? [Y/n] ");
+        print("Kill process ".$COLOR."$command".$RESET." (pid ".$COLOR."$pid".$RESET.")? [Y/n] ");
         if (go_ahead()) {
             murder_pid($pid);
         }
@@ -87,7 +90,7 @@ sub murder_names {
     foreach my $line (split(/\n/, $running)) {
         my ($pid, $command) = $line =~ /^\s*(\d+)\s+(.+?)\s*$/;
         next if $$ == $pid;
-        print("Kill process '$command' (pid $pid)? [Y/n] ");
+        print("Kill process ".$COLOR."$command".$RESET." (pid ".$COLOR."$pid".$RESET.")? [Y/n] ");
         if (go_ahead()) {
             murder_pid($pid);
         }
@@ -106,9 +109,9 @@ sub murder {
 }
 
 if (@ARGV < 1) {
-    say 'murder 123    # kill by pid';
-    say 'murder ruby   # kill by process name'; 
-    say 'murder :3000  # kill by port';
+    say 'murder '.$COLOR.'123'.$RESET.'    # kill by pid';
+    say 'murder '.$COLOR.'ruby'.$RESET.'   # kill by process name'; 
+    say 'murder '.$COLOR.':3000'.$RESET.'  # kill by port';
 } else {
     foreach my $arg (@ARGV) {
         murder($arg);
