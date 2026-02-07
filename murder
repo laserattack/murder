@@ -60,14 +60,18 @@ sub murder_pid {
     my @all_pids = get_all_descendants($pid);
     unshift @all_pids, $pid;
 
-    say "Process tree: " . join($RESET.', '.$COLOR, map { $COLOR.$_ } @all_pids).$RESET;
+    if (!$QUIET) {
+        say "Process tree: " . join($RESET.', '.$COLOR, map { $COLOR.$_ } @all_pids).$RESET;
+    }
 
     foreach my $target_pid (reverse @all_pids) {
         next unless is_running($target_pid);
 
         foreach my $sig (@SIGNALS) {
             my ($code, $wait) = @$sig;
-            say "Sending signal ".$COLOR."$code".$RESET." to pid ".$COLOR."$target_pid".$RESET;
+            if (!$QUIET) {
+                say "Sending signal ".$COLOR."$code".$RESET." to pid ".$COLOR."$target_pid".$RESET;
+            }
             kill($code, $target_pid);
             sleep(0.3);
             last unless is_running($target_pid);
@@ -122,6 +126,16 @@ sub murder {
     }
 }
 
+sub main {
+    if (@ARGV < 1) {
+        usage();
+    } else {
+        foreach my $arg (@ARGV) {
+            murder($arg);
+        }
+    }
+}
+
 sub usage {
     say "Usage: murder [OPTIONS] <PID|NAME|:PORT>";
     say "";
@@ -137,10 +151,10 @@ sub usage {
     say "  :PORT           Port number to kill process on (e.g., :3000)";
     say "";
     say "Examples:";
-    say "  murder 1234                 # Kill process with PID 1234";
-    say "  murder -f ruby              # Kill all ruby processes without asking";
-    say "  murder -q :3000             # Kill process on port 3000 quietly";
-    say "  murder --nocolor python     # Kill python processes without colors";
+    say "  murder 1234               Kill process with PID 1234";
+    say "  murder -f ruby            Kill all ruby processes without asking";
+    say "  murder -q :3000           Kill process on port 3000 quietly";
+    say "  murder --nocolor python   Kill python processes without colors";
 }
 
 GetOptions(
@@ -148,12 +162,19 @@ GetOptions(
     'quiet|q'   => \$QUIET,
     'help|h'    => \$HELP,
     'nocolor'   => \$NOCOLOR,
-) or do { usage(); exit 1; };
+    ) or do {
+        usage();
+        exit 1;
+};
 
-if (@ARGV < 1) {
+if ($HELP) {
     usage();
-} else {
-    foreach my $arg (@ARGV) {
-        murder($arg);
-    }
+    exit 1;
 }
+
+if ($NOCOLOR) {
+    $COLOR="";
+    $RESET="";
+}
+
+main();
