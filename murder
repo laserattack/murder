@@ -17,6 +17,8 @@ sub go_ahead {
     chomp($input);
     $input =~ s/^\s+|\s+$//g;
     $input = lc($input);
+     
+    return 1 if $input eq '';
     return $input =~ /^(y|yes|yas)$/ ? 1 : 0;
 }
 
@@ -72,7 +74,7 @@ sub murder_port {
     foreach my $pid (@pids) {
         my $command = `ps -p $pid -o comm=`;
         chomp($command);
-        print("Kill process '$command' (pid $pid)? [y/N] ");
+        print("Kill process '$command' (pid $pid)? [Y/n] ");
         if (go_ahead()) {
             murder_pid($pid);
         }
@@ -85,7 +87,7 @@ sub murder_names {
     foreach my $line (split(/\n/, $running)) {
         my ($pid, $command) = $line =~ /^\s*(\d+)\s+(.+?)\s*$/;
         next if $$ == $pid;
-        print("Kill process '$command' (pid $pid)? [y/N] ");
+        print("Kill process '$command' (pid $pid)? [Y/n] ");
         if (go_ahead()) {
             murder_pid($pid);
         }
