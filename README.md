@@ -29,4 +29,4 @@ Examples:
 
 - Perl 5.10+
 - `ps`, `awk`, `grep` - usually pre-installed
-- `lsof` - for port killing (optional)
+- `lsof` - for port killing
