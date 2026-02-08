@@ -145,9 +145,9 @@ sub usage {
     say "Usage: murder [OPTIONS] <PID|NAME|:PORT>";
     say "";
     say "Options:";
+    say "  -h, --help   Show this help message";
     say "  -f, --force  Kill without confirmation";
     say "  -q, --quiet  Quiet mode (minimal output)";
-    say "  -h, --help   Show this help message";
     say "  -o, --one    Kill only the specified process, not the entire tree";
     say "";
     say "Arguments:";

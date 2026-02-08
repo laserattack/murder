@@ -13,9 +13,9 @@ Inspired by [Evan Hahn's](https://evanhahn.com/) murder script
 Usage: murder [OPTIONS] <PID|NAME|:PORT>
 
 Options:
+  -h, --help   Show this help message
   -f, --force  Kill without confirmation
   -q, --quiet  Quiet mode (minimal output)
-  -h, --help   Show this help message
   -o, --one    Kill only the specified process, not the entire tree
 
 Arguments:
@@ -28,7 +28,6 @@ Examples:
   murder -f ruby     Kill all ruby processes without asking
   murder -q :3000    Kill process on port 3000 quietly
   murder -fq python  Kill python processes without asking and quietly
-
 ```
 
 By default, murder kills the process and all its descendants (if any exist). To kill only the specified process, use the `--one` or `-o` flag
