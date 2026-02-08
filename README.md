@@ -10,7 +10,7 @@ Inspired by [Evan Hahn's](https://evanhahn.com/) murder script
 # Usage
 
 ```
-Usage: murder [OPTIONS] <PID|NAME|:PORT>
+Usage: murder [-hfqo] arguments
 
 Options:
   -h, --help   Show this help message

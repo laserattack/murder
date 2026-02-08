@@ -142,7 +142,7 @@ sub main {
 }
 
 sub usage {
-    say "Usage: murder [OPTIONS] <PID|NAME|:PORT>";
+    say "Usage: murder [-hfqo] arguments";
     say "";
     say "Options:";
     say "  -h, --help   Show this help message";
