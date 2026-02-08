@@ -6,7 +6,6 @@ use feature 'say';
 use Time::HiRes 'sleep';
 use Getopt::Long;
 
-
 our @SIGNALS = (
     # [signal, timeout]
     [15, 3],
