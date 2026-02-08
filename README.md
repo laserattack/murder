@@ -13,22 +13,22 @@ Inspired by [Evan Hahn's](https://evanhahn.com/) murder script
 Usage: murder [OPTIONS] <PID|NAME|:PORT>
 
 Options:
-  -f, --force     Kill without confirmation
-  -q, --quiet     Quiet mode (minimal output)
-  -h, --help      Show this help message
-  -n, --nocolor   Disable colored output
-  -o, --one       Kill only the specified process, not the entire tree
+  -f, --force  Kill without confirmation
+  -q, --quiet  Quiet mode (minimal output)
+  -h, --help   Show this help message
+  -o, --one    Kill only the specified process, not the entire tree
 
 Arguments:
-  PID             Process ID to kill
-  NAME            Process name to kill (e.g., ruby, python)
-  :PORT           Port number to kill process on (e.g., :3000)
+  PID    Process ID to kill
+  NAME   Process name to kill (e.g., ruby, python)
+  :PORT  Port number to kill process on (e.g., :3000)
 
 Examples:
-  murder 1234               Kill process with PID 1234
-  murder -f ruby            Kill all ruby processes without asking
-  murder -q :3000           Kill process on port 3000 quietly
-  murder --nocolor python   Kill python processes without colors
+  murder 1234        Kill process with PID 1234
+  murder -f ruby     Kill all ruby processes without asking
+  murder -q :3000    Kill process on port 3000 quietly
+  murder -fq python  Kill python processes without asking and quietly
+
 ```
 
 By default, murder kills the process and all its descendants (if any exist). To kill only the specified process, use the `--one` or `-o` flag
