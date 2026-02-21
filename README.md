@@ -32,6 +32,22 @@ Examples:
 
 By default, murder kills the process and all its descendants (if any exist). To kill only the specified process, use the `--one` or `-o` flag
 
+# Installation
+
+Just download `murder` file
+
+```
+wget https://raw.githubusercontent.com/laserattack/murder/refs/heads/master/murder
+```
+
+Make it executable
+
+```
+chmod +x murder
+```
+
+And use (optionally, move it to a directory in your PATH)
+
 # Requirements
 
 - Perl 5.10+
