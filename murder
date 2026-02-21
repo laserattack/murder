@@ -16,10 +16,10 @@ our @SIGNALS = (
 
 # flags
 Getopt::Long::Configure('bundling'); # can combine flags e.g., -qf
-our $FORCE  = 0;
-our $QUIET  = 0;
-our $HELP   = 0;
-our $ONE    = 0;
+our $FORCE = 0;
+our $QUIET = 0;
+our $HELP  = 0;
+our $ONE   = 0;
 
 sub log_message {
     say @_ unless $QUIET;
