@@ -54,7 +54,7 @@ sub get_all_descendants {
     return keys %result;
 }
 
-sub kill_single_process {
+sub kill_process_single {
     my ($pid) = @_;
     foreach my $sig (@SIGNALS) {
         my ($code, $wait) = @$sig;
@@ -66,12 +66,12 @@ sub kill_single_process {
     }
 }
 
-sub murder_pid {
+sub kill_process_tree {
     my ($pid) = @_;
 
     if ($ONE) {
         say "Process: $pid" if !$QUIET;
-        kill_single_process($pid);
+        kill_process_single($pid);
         return;
     }
 
@@ -85,7 +85,19 @@ sub murder_pid {
             say "Process with pid $target_pid already dead" if !$QUIET;
             next;
         }
-        kill_single_process($target_pid);
+        kill_process_single($target_pid);
+    }
+}
+
+sub murder_pid {
+    my ($pid) = @_;
+    if ($FORCE) {
+        kill_process_tree($pid);
+    } else {
+        my $command = `ps -p $pid -o comm=`;
+        chomp($command);        
+        print("Kill process $command (pid $pid)? [Y/n] ");
+        kill_process_tree($pid) if go_ahead();
     }
 }
 
@@ -94,14 +106,7 @@ sub murder_port {
     $port =~ s/^://;
     my @pids = split(/\n/, `lsof -ti:$port`);
     foreach my $pid (@pids) {
-        my $command = `ps -p $pid -o comm=`;
-        chomp($command);
-        if ($FORCE) {
-            murder_pid($pid);
-        } else {
-            print("Kill process $command (pid $pid)? [Y/n] ");
-            murder_pid($pid) if go_ahead();
-        }
+        murder_pid($pid);
     }
 }
 
@@ -109,14 +114,9 @@ sub murder_names {
     my ($name) = @_;
     my $running = `ps -eo 'pid command' | grep -Fiw '$name' | grep -Fv grep`;
     foreach my $line (split(/\n/, $running)) {
-        my ($pid, $command) = $line =~ /^\s*(\d+)\s+(.+?)\s*$/;
+        my ($pid) = $line =~ /^\s*(\d+)/;
         next if $$ == $pid;
-        if ($FORCE) {
-            murder_pid($pid);
-        } else {
-            print("Kill process $command (pid $pid)? [Y/n] ");
-            murder_pid($pid) if go_ahead();
-        }
+        murder_pid($pid);
     }
 }
 
