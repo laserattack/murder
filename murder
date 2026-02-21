@@ -163,10 +163,10 @@ sub usage {
 }
 
 GetOptions(
-    'force|f'   => \$FORCE,
-    'quiet|q'   => \$QUIET,
-    'help|h'    => \$HELP,
-    'one|o'     => \$ONE,
+    'force|f' => \$FORCE,
+    'quiet|q' => \$QUIET,
+    'help|h'  => \$HELP,
+    'one|o'   => \$ONE,
     ) or do {
         usage();
         exit 1;
