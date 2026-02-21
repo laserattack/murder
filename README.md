@@ -20,7 +20,7 @@ Options:
 
 Arguments:
   PID    Process ID to kill
-  NAME   Process name to kill (e.g., ruby, python)
+  NAME   Process name to kill (e.g., python, emacs, firefox)
   :PORT  Port number to kill process on (e.g., :3000)
 
 Examples:
