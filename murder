@@ -4,11 +4,20 @@
 # Usage      : murder [-hfqonc] PID|NAME|:PORT
 
 use strict;
-use warnings;
-use Time::HiRes 'sleep';
 use Getopt::Long;
 
-our @SIGNALS = (
+BEGIN {
+    eval "use warnings";
+    eval "use Time::HiRes 'sleep'";
+    if ($@) {
+         *sleep = sub {
+            my $seconds = shift;
+            CORE::sleep($seconds) if $seconds > 0;
+        };
+    }
+}
+
+my @SIGNALS = (
     # [signal, timeout]
     [15, 3],
     [2, 3],
@@ -18,12 +27,12 @@ our @SIGNALS = (
 
 # flags
 Getopt::Long::Configure('bundling'); # can combine flags e.g., -qf
-our $FORCE    = 0;
-our $QUIET    = 0;
-our $HELP     = 0;
-our $ONE      = 0;
-our $DRYRUN   = 0;
-our $NAMEONLY = 0;
+my $FORCE    = 0;
+my $QUIET    = 0;
+my $HELP     = 0;
+my $ONE      = 0;
+my $DRYRUN   = 0;
+my $NAMEONLY = 0;
 
 sub log_message {
     print @_, "\n" unless $QUIET;
@@ -40,7 +49,8 @@ sub go_ahead {
 
 sub is_running {
     my ($pid) = @_;
-    return `ps -p $pid` =~ tr/\n// == 2;
+    my @lines = split(/\n/, `ps -p $pid 2>/dev/null`);
+    return scalar @lines == 2;
 }
 
 sub get_all_descendants {
