@@ -54,7 +54,7 @@ sub go_ahead {
 }
 
 sub is_running {
-    my ($pid, $start_time) = @_;
+    my ($pid) = @_;
     return kill(0, $pid);
 }
 
@@ -80,33 +80,54 @@ sub get_children {
     return @children;
 }
 
+sub get_pid_with_start {
+    my ($pid) = @_;
+    chomp(my $start = `ps -o lstart= -p $pid 2>/dev/null`);
+    return ($pid, $start);
+}
+
 sub get_all_descendants {
     my ($pid) = @_;
-    my %result;
+    my %result; # hash: pid => start_time
     my @queue = ($pid);
-
+    
+    my ($self_pid, $self_start) = get_pid_with_start($pid);
+    $result{$self_pid} = $self_start if $self_start;
+    
     while (my $current = shift @queue) {
         my @children = get_children($current);
         foreach my $child (@children) {
-            next if $result{$child}++;
-            push @queue, $child;
+            next if exists $result{$child};
+            
+            my ($child_pid, $child_start) = get_pid_with_start($child);
+            if ($child_start) {
+                $result{$child_pid} = $child_start;
+                push @queue, $child;
+            }
         }
     }
+    
+    return %result;
+}
 
-    return keys %result;
+sub verify_process {
+    my ($pid, $original_start) = @_;
+    chomp (my $current_start = `ps -o lstart= -p $pid 2>/dev/null`);
+    return $current_start eq $original_start;
 }
 
 sub kill_process_single {
     return if $DRYRUN;
-    my ($pid) = @_;
+    my ($pid, $original_start) = @_;
+    return if !is_running($pid) || !verify_process($pid, $original_start);
     foreach my $sig (@SIGNALS) {
         my ($code, $wait) = @$sig;
         log_message "Sending signal $code to pid $pid";
         kill($code, $pid);
         sleep(0.3);
-        last unless is_running($pid);
+        last if !is_running($pid) || !verify_process($pid, $original_start);
         sleep($wait);
-        last unless is_running($pid);
+        last if !is_running($pid) || !verify_process($pid, $original_start);
     }
 }
 
@@ -115,12 +136,13 @@ sub kill_process_tree {
 
     if ($ONE) {
         log_message "Process: $pid";
-        kill_process_single($pid);
+        my ($self_pid, $self_start) = get_pid_with_start($pid);
+        kill_process_single($self_pid, $self_start);
         return;
     }
 
-    my @all_pids = get_all_descendants($pid);
-    unshift @all_pids, $pid;
+    my %pids_with_start = get_all_descendants($pid);
+    my @all_pids        = keys %pids_with_start;
 
     my @all_pids_with_names = map {
         chomp(my $name = `ps -p $_ -o comm= 2>/dev/null`);
@@ -129,11 +151,11 @@ sub kill_process_tree {
     log_message "Process tree: ".join(', ', @all_pids_with_names);
 
     foreach my $target_pid (reverse @all_pids) {
-        unless (is_running($target_pid)) {
+        if (!is_running($target_pid) || !verify_process($target_pid, $pids_with_start{$target_pid})) {
             log_message "Process with pid $target_pid already dead";
             next;
         }
-        kill_process_single($target_pid);
+        kill_process_single($target_pid, $pids_with_start{$target_pid});
     }
 }
 
