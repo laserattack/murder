@@ -145,6 +145,7 @@ sub main {
     }
 }
 
+# TODO(20260227T094805): -n / --dry-run
 sub usage {
     say "Usage: murder [-hfqo] arguments";
     say "";
