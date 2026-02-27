@@ -49,8 +49,7 @@ sub go_ahead {
 
 sub is_running {
     my ($pid) = @_;
-    my @lines = split(/\n/, `ps -p $pid 2>/dev/null`);
-    return scalar @lines == 2;
+    return kill(0, $pid);
 }
 
 sub get_all_descendants {
@@ -123,6 +122,7 @@ sub kill_process_tree {
 
 sub murder_pid {
     my ($pid) = @_;
+    return unless is_running $pid;
     chomp(my $name  = `ps -p $pid -o comm= 2>/dev/null`);
     print("Kill process $name (pid $pid)? [Y/n] ");
     if ($FORCE) {
@@ -134,6 +134,10 @@ sub murder_pid {
 }
 
 sub murder_port {
+    if (!`which lsof 2>/dev/null`) {
+        print STDERR "WARNING: lsof not found. Port killing mode (:PORT) does not work\n";
+        return;
+    }
     my ($port) = @_;
     $port      =~ s/^://;
     my @pids   = split(/\n/, `lsof -ti:$port 2>/dev/null`);
@@ -145,18 +149,13 @@ sub murder_port {
 sub murder_names {
     my ($name) = @_;
     my $format = $NAMEONLY ? 'pid comm' : 'pid command';
-
     my $output = `ps -eo '$format' 2>/dev/null`;
     foreach my $line (split(/\n/, $output)) {
-        my ($pid, $cmd) = $line =~ /^\s*(\d+)\s+(.*)/;
-        next unless $pid && $cmd;
-        next if $pid == $$;
-
-        if ($NAMEONLY) {
-            next unless $cmd eq $name;
-        } else {
-            next unless $cmd =~ /\Q$name\E/;
-        }
+        my ($pid, $cmd_or_name)  = $line =~ /^\s*(\d+)\s+(.+)/;
+        next unless $pid && $cmd_or_name;
+        next if $pid             == $$;
+        # \Q...\E escapes regex metacharacters (treats $name as literal string)
+        next unless $cmd_or_name =~ /\Q$name\E/;
         murder_pid($pid);
     }
 }
