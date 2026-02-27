@@ -60,5 +60,5 @@ And use (optionally, move it to a directory in your PATH)
 # Requirements
 
 - Perl 5.10+
-- `ps`, `awk`, `grep` - usually pre-installed
+- `ps`, `grep` - usually pre-installed
 - `lsof` - for port killing
