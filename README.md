@@ -10,15 +10,16 @@ Inspired by [Evan Hahn's](https://evanhahn.com/) murder script
 # Usage
 
 ```
-What is it: Linux process killer script
-Usage:      murder [-hfqon] arguments
+What is it : Linux process killer script
+Usage      : murder [-hfqonc] arguments
 
 Flags:
-  -h, --help     Show this help message
-  -f, --force    Kill without confirmation
-  -q, --quiet    Quiet mode (minimal output)
-  -o, --one      Kill only the specified process, not the entire tree
-  -n, --dry-run
+  -h, --help       Show this help message
+  -f, --force      Kill without confirmation
+  -q, --quiet      Quiet mode (minimal output)
+  -o, --one        Kill only the specified process, not the entire tree
+  -c, --name-only  Search by process name only (not full command line)
+  -n, --dry-run    Show what would be killed without actually killing
 
 Arguments:
   PID    Process ID to kill
@@ -30,11 +31,15 @@ Examples:
   murder -f ruby       Kill all ruby processes without asking
   murder -q :3000      Kill process on port 3000 quietly
   murder -fq python    Kill python processes without asking and quietly
-  murder -nf firefox   Show what would be killed
-  murder -nfq firefox  Show what would be killed (minimal output)
+  murder -nf firefox   Show what would be killed (search by full command)
+  murder -nfc firefox  Show what would be killed (search by name only)
+  murder -nfq firefox  Show what would be killed with minimal output
 ```
 
-By default, murder kills the process and all its descendants (if any exist). To kill only the specified process, use the `--one` or `-o` flag
+Some explanations:
+
+- By default, murder kills the process and all its descendants (if any exist). To kill only the specified process, use the `--one` or `-o` flag
+- By default, in NAME mode murder searches for NAME as a substring in the full command line (e.g., "python" will match both "/usr/bin/python3" and "python script.py"). To search only in the executable name, use the `--name-only` or `-c` flag
 
 # Installation
 
