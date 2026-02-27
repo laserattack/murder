@@ -54,35 +54,47 @@ sub go_ahead {
 }
 
 sub is_running {
-    my ($pid) = @_;
+    my ($pid, $start_time) = @_;
     return kill(0, $pid);
+}
+
+sub get_children {
+    my ($pid) = @_;
+    local *DIR;
+    opendir(DIR, '/proc') or return;
+    my @children;
+
+    while (readdir(DIR)) {
+        next unless /^\d+$/;
+
+        if (open(STAT, "/proc/$_/stat")) {
+            my $stat = <STAT>;
+            close STAT;
+
+            my ($ppid) = ($stat =~ /^\d+\s+\([^)]+\)\s+.\s+(\d+)/);
+            if (defined $ppid && $ppid == $pid) {
+                push @children, $_;
+            }
+        }
+    }
+
+    closedir DIR;
+    return @children;
 }
 
 sub get_all_descendants {
     my ($pid) = @_;
     my %result;
-    my %children_of;
+    my @queue = ($pid);
 
-    my $ps_output = `ps -eo pid,ppid 2>/dev/null`;
-    my @lines = split(/\n/, $ps_output);
-    shift @lines;
-    foreach my $line (@lines) {
-        my ($child, $parent) = split(' ', $line);
-        push @{$children_of{$parent}}, $child;
+    while (my $current = shift @queue) {
+        my @children = get_children($current);
+        foreach my $child (@children) {
+            next if $result{$child}++;
+            push @queue, $child;
+        }
     }
 
-    my $find_children;
-    $find_children = sub {
-        my ($parent) = @_;
-        if (my $children = $children_of{$parent}) {
-            foreach my $child (@$children) {
-                next if $result{$child}++;
-                $find_children->($child);
-            }
-        }
-    };
-
-    $find_children->($pid);
     return keys %result;
 }
 
@@ -96,6 +108,7 @@ sub kill_process_single {
         sleep(0.3);
         last unless is_running($pid);
         sleep($wait);
+        last unless is_running($pid);
     }
 }
 
