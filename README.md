@@ -11,7 +11,7 @@ Inspired by [Evan Hahn's](https://evanhahn.com/) murder script
 
 ```
 What is it : Linux process killer script
-Usage      : murder [-hfqonc] arguments
+Usage      : murder [-hfqonc] PID|NAME|:PORT
 
 Flags:
   -h, --help       Show this help message
