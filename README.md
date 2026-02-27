@@ -61,4 +61,4 @@ And use (optionally, move it to a directory in your PATH)
 
 - **Perl 5.005 or higher** : usually pre-installed on any Linux system
 - **ps**                   : standard Unix tool (pre-installed)
-- **lsof**                 : optional, required only for port killing mode (:PORT)
+- **lsof** or **ss**       : optional, required only for port killing mode (:PORT)
