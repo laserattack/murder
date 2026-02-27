@@ -72,9 +72,7 @@ sub get_children {
             close STAT;
 
             my ($ppid) = ($stat =~ /^\d+\s+\([^)]+\)\s+.\s+(\d+)/);
-            if (defined $ppid && $ppid == $pid) {
-                push @children, $_;
-            }
+            push @children, $_ if (defined $ppid && $ppid == $pid);
         }
     }
 
