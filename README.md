@@ -10,13 +10,15 @@ Inspired by [Evan Hahn's](https://evanhahn.com/) murder script
 # Usage
 
 ```
-Usage: murder [-hfqo] arguments
+What is it: Linux process killer script
+Usage:      murder [-hfqon] arguments
 
-Options:
-  -h, --help   Show this help message
-  -f, --force  Kill without confirmation
-  -q, --quiet  Quiet mode (minimal output)
-  -o, --one    Kill only the specified process, not the entire tree
+Flags:
+  -h, --help     Show this help message
+  -f, --force    Kill without confirmation
+  -q, --quiet    Quiet mode (minimal output)
+  -o, --one      Kill only the specified process, not the entire tree
+  -n, --dry-run
 
 Arguments:
   PID    Process ID to kill
@@ -24,10 +26,12 @@ Arguments:
   :PORT  Port number to kill process on (e.g., :3000)
 
 Examples:
-  murder 1234        Kill process with PID 1234
-  murder -f ruby     Kill all ruby processes without asking
-  murder -q :3000    Kill process on port 3000 quietly
-  murder -fq python  Kill python processes without asking and quietly
+  murder 1234          Kill process with PID 1234
+  murder -f ruby       Kill all ruby processes without asking
+  murder -q :3000      Kill process on port 3000 quietly
+  murder -fq python    Kill python processes without asking and quietly
+  murder -nf firefox   Show what would be killed
+  murder -nfq firefox  Show what would be killed (minimal output)
 ```
 
 By default, murder kills the process and all its descendants (if any exist). To kill only the specified process, use the `--one` or `-o` flag

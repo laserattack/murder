@@ -60,11 +60,11 @@ sub get_all_descendants {
 }
 
 sub kill_process_single {
+    return if $DRYRUN;
     my ($pid) = @_;
     foreach my $sig (@SIGNALS) {
         my ($code, $wait) = @$sig;
         log_message "Sending signal $code to pid $pid";
-        last if $DRYRUN;
         kill($code, $pid);
         sleep(0.3);
         last unless is_running($pid);
@@ -97,12 +97,13 @@ sub kill_process_tree {
 
 sub murder_pid {
     my ($pid) = @_;
+    my $command = `ps -p $pid -o comm=`;
+    chomp($command);
+    print("Kill process $command (pid $pid)? [Y/n] ");
     if ($FORCE) {
+        print("\n");
         kill_process_tree($pid);
     } else {
-        my $command = `ps -p $pid -o comm=`;
-        chomp($command);        
-        print("Kill process $command (pid $pid)? [Y/n] ");
         kill_process_tree($pid) if go_ahead();
     }
 }
@@ -148,9 +149,10 @@ sub main {
 }
 
 sub usage {
-    say "Usage: murder [-hfqon] arguments";
+    say "What is it: Linux process killer script";
+    say "Usage:      murder [-hfqon] arguments";
     say "";
-    say "Options:";
+    say "Flags:";
     say "  -h, --help     Show this help message";
     say "  -f, --force    Kill without confirmation";
     say "  -q, --quiet    Quiet mode (minimal output)";
@@ -163,10 +165,12 @@ sub usage {
     say "  :PORT  Port number to kill process on (e.g., :3000)";
     say "";
     say "Examples:";
-    say "  murder 1234        Kill process with PID 1234";
-    say "  murder -f ruby     Kill all ruby processes without asking";
-    say "  murder -q :3000    Kill process on port 3000 quietly";
-    say "  murder -fq python  Kill python processes without asking and quietly";
+    say "  murder 1234          Kill process with PID 1234";
+    say "  murder -f ruby       Kill all ruby processes without asking";
+    say "  murder -q :3000      Kill process on port 3000 quietly";
+    say "  murder -fq python    Kill python processes without asking and quietly";
+    say "  murder -nf firefox   Show what would be killed";
+    say "  murder -nfq firefox  Show what would be killed (minimal output)";
 }
 
 GetOptions(
