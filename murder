@@ -5,7 +5,6 @@
 
 use strict;
 use warnings;
-use feature 'say';
 use Time::HiRes 'sleep';
 use Getopt::Long;
 
@@ -27,7 +26,7 @@ our $DRYRUN   = 0;
 our $NAMEONLY = 0;
 
 sub log_message {
-    say @_ unless $QUIET;
+    print @_, "\n" unless $QUIET;
 }
 
 sub go_ahead {
@@ -166,30 +165,30 @@ sub main {
 }
 
 sub usage {
-    say "What is it : Linux process killer script";
-    say "Usage      : murder [-hfqonc] PID|NAME|:PORT";
-    say "";
-    say "Flags:";
-    say "  -h, --help       Show this help message";
-    say "  -f, --force      Kill without confirmation";
-    say "  -q, --quiet      Quiet mode (minimal output)";
-    say "  -o, --one        Kill only the specified process, not the entire tree";
-    say "  -c, --name-only  Search by process name only (not full command line)";
-    say "  -n, --dry-run    Show what would be killed without actually killing";
-    say "";
-    say "Arguments:";
-    say "  PID    Process ID to kill";
-    say "  NAME   Process name to kill (e.g., python, emacs, firefox)";
-    say "  :PORT  Port number to kill process on (e.g., :3000)";
-    say "";
-    say "Examples:";
-    say "  murder 1234          Kill process with PID 1234";
-    say "  murder -f ruby       Kill all ruby processes without asking";
-    say "  murder -q :3000      Kill process on port 3000 quietly";
-    say "  murder -fq python    Kill python processes without asking and quietly";
-    say "  murder -nf firefox   Show what would be killed (search by full command)";
-    say "  murder -nfc firefox  Show what would be killed (search by name only)";
-    say "  murder -nfq firefox  Show what would be killed with minimal output";
+    print "What is it : Linux process killer script", "\n";
+    print "Usage      : murder [-hfqonc] PID|NAME|:PORT", "\n";
+    print "", "\n";
+    print "Flags:", "\n";
+    print "  -h, --help       Show this help message", "\n";
+    print "  -f, --force      Kill without confirmation", "\n";
+    print "  -q, --quiet      Quiet mode (minimal output)", "\n";
+    print "  -o, --one        Kill only the specified process, not the entire tree", "\n";
+    print "  -c, --name-only  Search by process name only (not full command line)", "\n";
+    print "  -n, --dry-run    Show what would be killed without actually killing", "\n";
+    print "", "\n";
+    print "Arguments:", "\n";
+    print "  PID    Process ID to kill", "\n";
+    print "  NAME   Process name to kill (e.g., python, emacs, firefox)", "\n";
+    print "  :PORT  Port number to kill process on (e.g., :3000)", "\n";
+    print "", "\n";
+    print "Examples:", "\n";
+    print "  murder 1234          Kill process with PID 1234", "\n";
+    print "  murder -f ruby       Kill all ruby processes without asking", "\n";
+    print "  murder -q :3000      Kill process on port 3000 quietly", "\n";
+    print "  murder -fq python    Kill python processes without asking and quietly", "\n";
+    print "  murder -nf firefox   Show what would be killed (search by full command)", "\n";
+    print "  murder -nfc firefox  Show what would be killed (search by name only)", "\n";
+    print "  murder -nfq firefox  Show what would be killed with minimal output", "\n";
 }
 
 GetOptions(
