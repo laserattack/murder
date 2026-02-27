@@ -16,10 +16,11 @@ our @SIGNALS = (
 
 # flags
 Getopt::Long::Configure('bundling'); # can combine flags e.g., -qf
-our $FORCE = 0;
-our $QUIET = 0;
-our $HELP  = 0;
-our $ONE   = 0;
+our $FORCE  = 0;
+our $QUIET  = 0;
+our $HELP   = 0;
+our $ONE    = 0;
+our $DRYRUN = 0;
 
 sub log_message {
     say @_ unless $QUIET;
@@ -63,6 +64,7 @@ sub kill_process_single {
     foreach my $sig (@SIGNALS) {
         my ($code, $wait) = @$sig;
         log_message "Sending signal $code to pid $pid";
+        last if $DRYRUN;
         kill($code, $pid);
         sleep(0.3);
         last unless is_running($pid);
@@ -145,15 +147,15 @@ sub main {
     }
 }
 
-# TODO(20260227T094805): -n / --dry-run
 sub usage {
-    say "Usage: murder [-hfqo] arguments";
+    say "Usage: murder [-hfqon] arguments";
     say "";
     say "Options:";
-    say "  -h, --help   Show this help message";
-    say "  -f, --force  Kill without confirmation";
-    say "  -q, --quiet  Quiet mode (minimal output)";
-    say "  -o, --one    Kill only the specified process, not the entire tree";
+    say "  -h, --help     Show this help message";
+    say "  -f, --force    Kill without confirmation";
+    say "  -q, --quiet    Quiet mode (minimal output)";
+    say "  -o, --one      Kill only the specified process, not the entire tree";
+    say "  -n, --dry-run";
     say "";
     say "Arguments:";
     say "  PID    Process ID to kill";
@@ -168,10 +170,11 @@ sub usage {
 }
 
 GetOptions(
-    'force|f' => \$FORCE,
-    'quiet|q' => \$QUIET,
-    'help|h'  => \$HELP,
-    'one|o'   => \$ONE,
+    'force|f'   => \$FORCE,
+    'quiet|q'   => \$QUIET,
+    'help|h'    => \$HELP,
+    'one|o'     => \$ONE,
+    'dry-run|n' => \$DRYRUN,
     ) or do {
         usage();
         exit 1;
