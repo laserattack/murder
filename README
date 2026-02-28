@@ -37,11 +37,14 @@ NOTES
        --name-only
 
 ARGUMENTS
-       PID    Process ID to kill (e.g., 1234)
+       PID
+	      Process ID to kill (e.g., 1234)
 
-       NAME   Process name to kill (e.g., python, emacs, firefox)
+       NAME
+	      Process name to kill (e.g., python, emacs, firefox)
 
-       :PORT  Port number to kill process on (e.g., :3000)
+       :PORT
+	      Port number to kill process on (e.g., :3000)
 
 EXAMPLES
        murder 1234
@@ -69,7 +72,8 @@ REQUIREMENTS
        Perl 5.005 or higher
 	      Usually pre-installed on any Linux system
 
-       ps     Standard Unix tool (pre-installed)
+       ps
+	      Standard Unix tool (pre-installed)
 
        lsof or ss
 	      Optional, required only for port killing mode (:PORT)
