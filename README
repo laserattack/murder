@@ -1,0 +1,80 @@
+4mMURDER24m(1)                        User Commands                       4mMURDER24m(1)
+
+1mNAME0m
+       1mmurder 22m- smart Linux process killer
+
+       Inspired by Evan Hahn's murder script
+
+1mSYNOPSIS0m
+       murder [-hfqonc] PID|NAME|:PORT
+
+1mOPTIONS0m
+       1m-h, --help0m
+              Show help message
+
+       1m-f, --force0m
+              Kill without confirmation
+
+       1m-q, --quiet0m
+              Quiet mode (minimal output)
+
+       1m-o, --one0m
+              Kill only the specified process, not the entire tree
+
+       1m-c, --name-only0m
+              Search by process name only (not full command line)
+
+       1m-n, --dry-run0m
+              Show what would be killed without actually killing
+
+1mNOTES0m
+       By  default,  1mmurder 22mkills the process and all its descendants. To kill
+       only the specified process, use 1m-o 22mor 1m--one0m
+
+       In NAME mode, 1mmurder 22msearches for NAME as a substring in the full  com-
+       mand  line  (e.g.,  4mpython24m  matches  both  4m/usr/bin/python324m  and 4mpython0m
+       4mscript.py24m).  To  search  only  in  the  executable  name,  use  1m-c   22mor
+       1m--name-only0m
+
+1mARGUMENTS0m
+       1mPID    22mProcess ID to kill (e.g., 1234)
+
+       1mNAME   22mProcess name to kill (e.g., python, emacs, firefox)
+
+       1m:PORT  22mPort number to kill process on (e.g., :3000)
+
+1mEXAMPLES0m
+       1mmurder 12340m
+              Kill process with PID 1234
+
+       1mmurder -f ruby0m
+              Kill all ruby processes without asking
+
+       1mmurder -q :30000m
+              Kill process on port 3000 quietly
+
+       1mmurder -fq python0m
+              Kill python processes without asking and quietly
+
+       1mmurder -nf firefox0m
+              Show what would be killed (search by full command)
+
+       1mmurder -nfc firefox0m
+              Show what would be killed (search by name only)
+
+       1mmurder -nfq firefox0m
+              Show what would be killed with minimal output
+
+1mREQUIREMENTS0m
+       1mPerl 5.005 or higher0m
+              Usually pre-installed on any Linux system
+
+       1mps     22mStandard Unix tool (pre-installed)
+
+       1mlsof 22mor 1mss0m
+              Optional, required only for port killing mode (:PORT)
+
+1mSEE ALSO0m
+       kill(1), pkill(1), lsof(8), ss(8)
+
+murder                           February 2026                       4mMURDER24m(1)
