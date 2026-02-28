@@ -1,4 +1,4 @@
 readme:
-	@groff -man -Tascii murder.1 | col -bx > README
+	@man ./murder.1 | col -b > README
 
 .PHONY: readme
