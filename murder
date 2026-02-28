@@ -199,7 +199,7 @@ sub murder_port {
         $ss_out =~ /pid=(\d+)/g
     };
     my %seen;
-    @pids = grep { !$seen{$_}++ } @pids;
+    @pids = grep { !$seen{$_}++ } @pids; # mb ipv4-ipv6 duplicates
 
     # try lsof
     @pids = split(/\n/, `lsof -ti:$port 2>/dev/null`) unless @pids;
