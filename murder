@@ -64,7 +64,7 @@ sub get_children {
         if (open(STAT, "/proc/$_/stat")) {
             my $stat = <STAT>;
             close STAT;
-            my ($ppid) = ($stat =~ /^\d+\s+\([^)]+\)\s+.\s+(\d+)/);
+            my ($ppid) = ($stat =~ /^.*\)\s+.\s+(\d+)/);
             push @children, $_ if (defined $ppid && $ppid == $pid);
         }
     }
