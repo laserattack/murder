@@ -15,12 +15,6 @@ BEGIN {
             CORE::sleep($seconds) if $seconds > 0;
         };
     }
-    my $has_ss   = `which ss 2>/dev/null`;
-    my $has_lsof = `which lsof 2>/dev/null`;
-
-    unless ($has_ss || $has_lsof) {
-        print STDERR "WARNING: Neither 'ss' nor 'lsof' found. Port killing mode (:PORT) will not work\n";
-    }
 }
 
 my @SIGNALS = (
@@ -151,22 +145,28 @@ sub kill_process_tree {
 
     foreach my $target_pid (reverse @all_pids) {
 
-        my $verified = verify_process($target_pid, $pids_with_start{$target_pid});
-        my $can_kill = is_running($target_pid);
+        my $exists = is_running($target_pid);
 
-        unless ($verified) {
+        # exists, but another process on the pid
+        if ($exists && !verify_process($target_pid, $pids_with_start{$target_pid})) {
             log_message "Process with pid $target_pid changed";
             next;
         }
 
-        unless ($can_kill) {
+        # no exists ??
+        unless ($exists) {
+
+            # mb exists but no rights?
             my $no_rights = do {
                 my @lines = split(/\n/, `ps -p $target_pid 2>/dev/null`);
                 scalar @lines == 2
             };
+
             if ($no_rights) {
+                # exists but no rights
                 log_message "There are no rights to send a signal to $target_pid";
             } else {
+                # no exists
                 log_message "Process with pid $target_pid already dead";
             }
             next;
@@ -192,10 +192,16 @@ sub murder_pid {
 sub murder_port {
     my ($port) = @_;
     $port =~ s/^://;
+
+    # try ss
     my @pids = do {
         my $ss_out = `ss -ltnup 'sport = :$port' 2>/dev/null`;
         $ss_out =~ /pid=(\d+)/g
     };
+    my %seen;
+    @pids = grep { !$seen{$_}++ } @pids;
+
+    # try lsof
     @pids = split(/\n/, `lsof -ti:$port 2>/dev/null`) unless @pids;
 
     foreach my $pid (@pids) {
@@ -280,6 +286,13 @@ GetOptions(
         usage();
         exit 1;
 };
+
+my $has_ss   = `which ss 2>/dev/null`;
+my $has_lsof = `which lsof 2>/dev/null`;
+
+if (!$QUIET && !$has_ss && !$has_lsof) {
+    print STDERR "WARNING: Neither 'ss' nor 'lsof' found. Port killing mode (:PORT) will not work\n";
+}
 
 if ($HELP) {
     usage();
