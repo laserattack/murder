@@ -30,10 +30,6 @@ Search by process name only (not full command line)
 \fB\-n, \-\-dry\-run\fR
 .br
 Show what would be killed without actually killing
-.SH NOTES
-By default, \fBmurder\fR kills the process and all its descendants. To kill only the specified process, use \fB\-o\fR or \fB\-\-one\fR
-
-In NAME mode, \fBmurder\fR searches for NAME as a substring in the full command line (e.g., \fIpython\fP matches both \fI/usr/bin/python3\fP and \fIpython script.py\fP). To search only in the executable name, use \fB\-c\fR or \fB\-\-name\-only\fR
 .SH ARGUMENTS
 .TP
 \fBPID\fR
@@ -76,6 +72,43 @@ Show what would be killed (search by name only)
 \fBmurder \-nfq firefox\fR
 .br
 Show what would be killed with minimal output
+.SH NOTES
+.SS Signal escalation
+\fBmurder\fR uses graduated signals with timeouts:
+.TP
+\fBSIGTERM (15)\fR
+.br
+wait 3 seconds
+.TP
+\fBSIGINT  (2)\fR
+.br
+wait 3 seconds
+.TP
+\fBSIGHUP  (1)\fR
+.br
+wait 4 seconds
+.TP
+\fBSIGKILL (9)\fR
+.br
+no wait
+.P
+\fBmurder\fR verifies the process exists and hasn't been replaced (PID reuse) both before and after each signal. If the process dies during escalation, it stops sending further signals
+.SS Process tree
+By default, \fBmurder\fR kills the entire process tree. It finds all descendants by parsing \fI/proc/*/stat\fR and kills them in reverse order (children first). Use \fB\-o\fR to kill only the specified process
+.SS Search behavior
+.TP
+\fBPID   mode\fR
+.br
+Direct kill by process ID
+.TP
+\fBNAME  mode\fR
+.br
+Searches \fBps -eo command\fR (or \fBps -eo comm\fR with \fB\-c\fR)
+Matches substring, excludes itself (won't kill murder process)
+.TP
+\fB:PORT mode\fR
+.br
+Uses \fBss\fR first, falls back to \fBlsof\fR
 .SH REQUIREMENTS
 .TP
 \fBPerl 5.005 or higher\fR

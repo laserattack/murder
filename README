@@ -27,15 +27,6 @@ OPTIONS
        -n, --dry-run
 	      Show what would be killed without actually killing
 
-NOTES
-       By default, murder kills the process and all its descendants. To kill
-       only the specified process, use -o or --one
-
-       In NAME mode, murder searches for NAME as a substring in the full
-       command line (e.g., python matches both /usr/bin/python3 and python
-       script.py). To search only in the executable name, use -c or
-       --name-only
-
 ARGUMENTS
        PID
 	      Process ID to kill (e.g., 1234)
@@ -67,6 +58,42 @@ EXAMPLES
 
        murder -nfq firefox
 	      Show what would be killed with minimal output
+
+NOTES
+   Signal escalation
+       murder uses graduated signals with timeouts:
+
+       SIGTERM (15)
+	      wait 3 seconds
+
+       SIGINT  (2)
+	      wait 3 seconds
+
+       SIGHUP  (1)
+	      wait 4 seconds
+
+       SIGKILL (9)
+	      no wait
+
+       murder verifies the process exists and hasn't been replaced (PID reuse)
+       both before and after each signal. If the process dies during
+       escalation, it stops sending further signals
+
+   Process tree
+       By default, murder kills the entire process tree. It finds all
+       descendants by parsing /proc/*/stat and kills them in reverse order
+       (children first). Use -o to kill only the specified process
+
+   Search behavior
+       PID   mode
+	      Direct kill by process ID
+
+       NAME  mode
+	      Searches ps -eo command (or ps -eo comm with -c) Matches
+	      substring, excludes itself (won't kill murder process)
+
+       :PORT mode
+	      Uses ss first, falls back to lsof
 
 REQUIREMENTS
        Perl 5.005 or higher
