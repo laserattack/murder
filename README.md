@@ -1,6 +1,6 @@
 # Wtf?
 
-**murder** - simple Linux process killer script that I often use
+**murder** - smart Linux process killer script that I often use
 
 Inspired by [Evan Hahn's](https://evanhahn.com/) murder script
 
