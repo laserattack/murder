@@ -8,21 +8,27 @@ murder [\-hfqonc] PID|NAME|:PORT
 .SH OPTIONS
 .TP
 \fB\-h, \-\-help\fR
+.br
 Show help message
 .TP
 \fB\-f, \-\-force\fR
+.br
 Kill without confirmation
 .TP
 \fB\-q, \-\-quiet\fR
+.br
 Quiet mode (minimal output)
 .TP
 \fB\-o, \-\-one\fR
+.br
 Kill only the specified process, not the entire tree
 .TP
 \fB\-c, \-\-name\-only\fR
+.br
 Search by process name only (not full command line)
 .TP
 \fB\-n, \-\-dry\-run\fR
+.br
 Show what would be killed without actually killing
 .SH NOTES
 By default, \fBmurder\fR kills the process and all its descendants. To kill only the specified process, use \fB\-o\fR or \fB\-\-one\fR
@@ -31,44 +37,57 @@ In NAME mode, \fBmurder\fR searches for NAME as a substring in the full command 
 .SH ARGUMENTS
 .TP
 \fBPID\fR
+.br
 Process ID to kill (e.g., 1234)
 .TP
 \fBNAME\fR
+.br
 Process name to kill (e.g., python, emacs, firefox)
 .TP
 \fB:PORT\fR
+.br
 Port number to kill process on (e.g., :3000)
 .SH EXAMPLES
 .TP
 \fBmurder 1234\fR
+.br
 Kill process with PID 1234
 .TP
 \fBmurder \-f ruby\fR
+.br
 Kill all ruby processes without asking
 .TP
 \fBmurder \-q :3000\fR
+.br
 Kill process on port 3000 quietly
 .TP
 \fBmurder \-fq python\fR
+.br
 Kill python processes without asking and quietly
 .TP
 \fBmurder \-nf firefox\fR
+.br
 Show what would be killed (search by full command)
 .TP
 \fBmurder \-nfc firefox\fR
+.br
 Show what would be killed (search by name only)
 .TP
 \fBmurder \-nfq firefox\fR
+.br
 Show what would be killed with minimal output
 .SH REQUIREMENTS
 .TP
 \fBPerl 5.005 or higher\fR
+.br
 Usually pre-installed on any Linux system
 .TP
 \fBps\fR
+.br
 Standard Unix tool (pre-installed)
 .TP
 \fBlsof\fR or \fBss\fR
+.br
 Optional, required only for port killing mode (:PORT)
 .SH SEE ALSO
 kill(1), pkill(1), lsof(8), ss(8)
