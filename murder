@@ -310,7 +310,7 @@ $ss   = check_command('ss');
 $lsof = check_command('lsof');
 $ps   = check_command('ps');
 if (!$ps) {
-    print STDERR "ERROR: 'ps' program was not found\n";
+    print STDERR "ERROR: 'ps' was not found\n";
     exit 1;
 }
 if (!$QUIET && !$ss && !$lsof) {
