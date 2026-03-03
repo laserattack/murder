@@ -115,6 +115,7 @@ sub verify_process {
 }
 
 # WARNING: potential race condition (=> pid reuse) here
+# (very unlikely, since the window is negligible)
 sub kill_process_single {
     return if $DRYRUN;
     my ($pid, $original_start) = @_;
