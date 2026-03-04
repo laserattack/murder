@@ -4,7 +4,7 @@
 
 Inspired by Evan Hahn's murder script
 .SH SYNOPSIS
-murder [\-hfqonc] PID|NAME|:PORT
+murder [\-hfqoncr] PID|NAME|:PORT
 .SH OPTIONS
 .TP
 \fB\-h, \-\-help\fR
@@ -30,6 +30,13 @@ Search by process name only (not full command line)
 \fB\-n, \-\-dry\-run\fR
 .br
 Show what would be killed without actually killing
+.TP
+\fB\-r, \-\-reverse\fR
+.br
+Kill parent processes before children
+.br
+.br
+Default is children first (usually safer)
 .SH ARGUMENTS
 .TP
 \fBPID\fR
@@ -94,7 +101,11 @@ no wait
 .P
 \fBmurder\fR verifies the process exists and hasn't been replaced (PID reuse) both before and after each signal. If the process dies during escalation, it stops sending further signals
 .SS Process tree
-By default, \fBmurder\fR kills the entire process tree. It finds all descendants by parsing \fI/proc/*/stat\fR and kills them in reverse order (children first). Use \fB\-o\fR to kill only the specified process
+By default, \fBmurder\fR kills the entire process tree. It finds all descendants by parsing \fI/proc/*/stat\fR and kills them in order: children first
+
+Use \fB\-r\fR to change order
+.br
+Use \fB\-o\fR to kill only the specified process
 .SS Search behavior
 .TP
 \fBPID   mode\fR
