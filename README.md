@@ -7,7 +7,7 @@ NAME
        Inspired by Evan Hahn's murder script
 
 SYNOPSIS
-       murder [-hfqonc] PID|NAME|:PORT
+       murder [-hfqoncr] PID|NAME|:PORT
 
 OPTIONS
        -h, --help
@@ -27,6 +27,10 @@ OPTIONS
 
        -n, --dry-run
 	      Show what would be killed without actually killing
+
+       -r, --reverse
+	      Kill parent processes before children
+	      Default is children first (usually safer)
 
 ARGUMENTS
        PID
@@ -82,8 +86,11 @@ NOTES
 
    Process tree
        By default, murder kills the entire process tree. It finds all
-       descendants by parsing /proc/*/stat and kills them in reverse order
-       (children first). Use -o to kill only the specified process
+       descendants by parsing /proc/*/stat and kills them in order: children
+       first
+
+       Use -r to change order
+       Use -o to kill only the specified process
 
    Search behavior
        PID   mode
