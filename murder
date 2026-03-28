@@ -46,8 +46,8 @@ sub log_message {
 
 sub go_ahead {
     chomp(my $input = <STDIN>);
-    $input    =~ s/^\s+|\s+$//g;
-    $input    = lc($input);
+    $input =~ s/^\s+|\s+$//g;
+    $input = lc($input);
 
     return 1 if $input eq '';
     return $input =~ /^(y|yes|yas)$/? 1: 0;
@@ -90,7 +90,12 @@ sub kill_process_single {
 sub get_children {
     my ($pid) = @_;
     local *DIR;
-    opendir(DIR, '/proc') or return;
+
+    if (!opendir(DIR, '/proc')) {
+        log_message "WARNING: Cannot open /proc directory: $!";
+        return [];
+    }
+
     my @children;
 
     while (readdir(DIR)) {
@@ -98,19 +103,25 @@ sub get_children {
 
         if (open(STAT, "/proc/$_/stat")) {
             my $stat = <STAT>;
-            close STAT;
+            if (!close(STAT)) {
+                log_message "WARNING: Cannot close stat file for pid $_: $!";
+                next;
+            }
             my ($ppid) = ($stat =~ /^.*\)\s+.\s+(\d+)/);
             push @children, $_ if (defined $ppid && $ppid == $pid);
         }
     }
 
-    closedir DIR;
+    if (!closedir(DIR)) {
+        log_message "WARNING: Cannot close /proc directory: $!";
+    }
+
     return \@children; # return ptr, no array!
 }
 
 sub get_all_descendants {
-    my ($pid)  = @_;
-    my @queue  = ($pid);
+    my ($pid) = @_;
+    my @queue = ($pid);
     my @result;
     my %seen;
 
@@ -148,7 +159,7 @@ sub kill_process_tree {
     }
 
     my $descendants = get_all_descendants($pid);
-    
+
     my @names;
     foreach my $proc (@$descendants) {
         my $pid = $proc->[0];
@@ -159,7 +170,7 @@ sub kill_process_tree {
 
     # changing the real array, there are no copies
     @$descendants = reverse @$descendants unless $REVERSE;
-    
+
     foreach my $proc (@$descendants) {
         my ($target_pid, $start_time) = @$proc;
         my $exists = is_running($target_pid);
